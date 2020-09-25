@@ -4,34 +4,37 @@ import android.app.IntentService
 import android.content.ComponentName
 import android.content.Intent
 import android.content.pm.PackageManager
-import com.example.dynamicicontest.App
 import com.example.dynamicicontest.activity.LastActivity
-import com.example.dynamicicontest.activity.MainActivity.Companion.ICON_BLUE
-import com.example.dynamicicontest.activity.MainActivity.Companion.ICON_KEY
-import com.example.dynamicicontest.activity.MainActivity.Companion.ICON_RED
 import com.example.dynamicicontest.alias.BlueLauncherAlias
 import com.example.dynamicicontest.alias.RedLauncherAlias
+import com.example.dynamicicontest.application.CustomApplication
+import com.example.dynamicicontest.utls.IconIdsConstants.Companion.ICON_ACCESS_KEY
+import com.example.dynamicicontest.utls.IconIdsConstants.Companion.ICON_BLUE_ID
+import com.example.dynamicicontest.utls.IconIdsConstants.Companion.ICON_RED_ID
 
 class ChangeIconIntentService() : IntentService(ChangeIconIntentService::class.simpleName) {
-    override fun onHandleIntent(p0: Intent?) {
+    override fun onHandleIntent(intent: Intent?) {
 
-        val receivedIntentData = p0?.extras
-        val intentMainActivity = Intent(applicationContext, LastActivity::class.java).apply {
+        val receivedIntentData = intent?.extras
+        val receivedIconId = receivedIntentData?.get(ICON_ACCESS_KEY)
+
+        val intentToLastActivity = Intent(applicationContext, LastActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            extras?.putString(ICON_ACCESS_KEY, receivedIconId.toString())
         }
 
-        if (receivedIntentData?.get(ICON_KEY) == ICON_RED) {
+        if (receivedIconId == ICON_RED_ID) {
             addRedIcon()
             removeBlueIcon()
-        } else if (receivedIntentData?.get(ICON_KEY) == ICON_BLUE) {
+        } else if (receivedIconId == ICON_BLUE_ID) {
             addBlueIcon()
             removeRedIcon()
         }
 
         while (true) {
-            sleep()
-            if ((application as App).lastActivity == null) {
-                startActivity(intentMainActivity)
+            appSleep()
+            if ((application as CustomApplication).stackedActivity == null) {
+                startActivity(intentToLastActivity)
                 break
             }
         }
@@ -39,7 +42,7 @@ class ChangeIconIntentService() : IntentService(ChangeIconIntentService::class.s
 
     }
 
-    fun sleep() {
+    fun appSleep() {
         try {
             Thread.sleep(100)
         } catch (e: InterruptedException) {

@@ -1,19 +1,19 @@
-package com.example.dynamicicontest
+package com.example.dynamicicontest.application
 
 import android.app.Activity
 import android.app.Application
 import android.os.Bundle
 
-class App : Application() {
+class CustomApplication : Application() {
 
-    var lastActivity: Activity? = null
+    var stackedActivity: Activity? = null
 
     override fun onCreate() {
         super.onCreate()
 
-        registerActivityLifecycleCallbacks(object : Application.ActivityLifecycleCallbacks {
+        registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {
             override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
-                lastActivity = activity
+                stackedActivity = activity
             }
 
             override fun onActivityStarted(activity: Activity) {
@@ -32,7 +32,7 @@ class App : Application() {
             }
 
             override fun onActivityDestroyed(activity: Activity) {
-                lastActivity = null
+                stackedActivity = null
             }
         })
     }
