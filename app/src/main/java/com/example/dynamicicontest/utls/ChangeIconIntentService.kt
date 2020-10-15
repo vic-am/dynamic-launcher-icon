@@ -20,7 +20,7 @@ class ChangeIconIntentService() : IntentService(ChangeIconIntentService::class.s
 
         val intentToLastActivity = Intent(applicationContext, LastActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            extras?.putString(ICON_ACCESS_KEY, receivedIconId.toString())
+//            extras?.putString(ICON_ACCESS_KEY, receivedIconId.toString())
         }
 
         if (receivedIconId == ICON_RED_ID) {
